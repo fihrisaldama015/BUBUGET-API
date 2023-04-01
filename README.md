@@ -4,29 +4,31 @@
 
 ## Server Requirements
 
-PHP version 7.4 or higher is required, with the following extensions installed:
-Composer, install composer for Windows. <a href="https://getcomposer.org/Composer-Setup.exe">Click Here to Download.</a>
+<b>PHP</b> - version 7.4 or higher is required.
+
+<b>Composer</b> - install composer for Windows. <a href="https://getcomposer.org/Composer-Setup.exe">Click Here to Download.</a>
 
 ## Setup
 
 Rename `env` to `.env`, hilangkan command atau tekan Ctrl + / untuk CI_ENVIRONMENT dan value lain yang dibutuhkan.
+
 import `bubuget.sql` ke phpmyadmin atau RDBMS masing-masing.
 
 ## Installation
 
-Update Composer
+### Update Composer
 
 ```
 composer update
 ```
 
-Install Dependencies
+### Install Dependencies
 
 ```
 composer install
 ```
 
-Start the application
+### Start the application
 
 ```
 php spark serve
