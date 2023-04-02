@@ -27,32 +27,34 @@ $routes->set404Override();
  * --------------------------------------------------------------------
  */
 
- $routes->get('/', 'Home::index');
+
+$routes->get('/', 'Dashboard::index');
+$routes->get('/login', 'Dashboard::login');
 
 /*
- * --------------------------------------------------------------------
- * Resource Route
- * --------------------------------------------------------------------
- */
-
-$routes->resource('transaction');
-$routes->resource('category');
-$routes->resource('budget');
+* --------------------------------------------------------------------
+* Resource Route
+* --------------------------------------------------------------------
+*/
+$routes->get('api', 'Api\Home::index');
+$routes->resource('api/transaction');
+$routes->resource('api/category');
+$routes->resource('api/budget');
 
 /*
 * --------------------------------------------------------------------
 * Additional Custom Routing
 * --------------------------------------------------------------------
 */
-$routes->get('/user/(:alphanum)/budget', 'Budget::getUserBudget/$1');
-$routes->get('/user/(:alphanum)/budget/(:num)', 'Budget::getUserBudgetByCategory/$1/$2');
-$routes->get('/user/(:alphanum)/transaction', 'Transaction::getUserTransaction/$1');
-$routes->get('/user/(:alphanum)/transaction/(:num)', 'Transaction::getUserTransactionByCategory/$1/$2');
-$routes->get('/user/(:alphanum)/expense', 'Transaction::getUserExpense/$1');
-$routes->get('/user/(:alphanum)/income', 'Transaction::getUserIncome/$1');
-$routes->get('/user/(:alphanum)/stats', 'User::getUserStats/$1');
-$routes->post('/user/login', 'User::login');
-$routes->resource('user');
+$routes->get('api/user/(:alphanum)/budget', 'Api\Budget::getUserBudget/$1');
+$routes->get('api/user/(:alphanum)/budget/(:num)', 'Api\Budget::getUserBudgetByCategory/$1/$2');
+$routes->get('api/user/(:alphanum)/transaction', 'Api\Transaction::getUserTransaction/$1');
+$routes->get('api/user/(:alphanum)/transaction/(:num)', 'Api\Transaction::getUserTransactionByCategory/$1/$2');
+$routes->get('api/user/(:alphanum)/expense', 'Api\User::getUserExpense/$1');
+$routes->get('api/user/(:alphanum)/income', 'Api\User::getUserIncome/$1');
+$routes->get('api/user/(:alphanum)/stats', 'Api\User::getUserStats/$1');
+$routes->post('api/user/login', 'Api\User::login');
+$routes->resource('api/user');
 
 /*
  * --------------------------------------------------------------------

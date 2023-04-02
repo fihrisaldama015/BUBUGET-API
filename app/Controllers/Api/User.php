@@ -1,11 +1,12 @@
 <?php
-namespace App\Controllers;
+namespace App\Controllers\Api;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\UserModel;
 use App\Models\TransactionModel;
 use Firebase\JWT\JWT;
+use Google_Client;
 use Throwable;
 
 class User extends ResourceController
@@ -32,6 +33,7 @@ class User extends ResourceController
         $user_id = $this->request->getPost('user_id');
         $name = $this->request->getPost('name');
         $email = $this->request->getPost('email');
+        $password = $this->request->getPost('password');
 
         if(!$user_id){
             return $this->fail('user_id is required');
@@ -49,7 +51,7 @@ class User extends ResourceController
             'user_id' => $user_id,
             'user_name' => $name,
             'email' => $email,
-            'balance' => 0
+            'password' => $password
         );
         try {
             $result = $user->insert($data);
@@ -83,45 +85,26 @@ class User extends ResourceController
     }
 
     public function login(){
-        $userModel = new UserModel();
-
-        $uid = $this->request->getPost('uid');
-        $email = $this->request->getPost('email');
-        $name = $this->request->getPost('displayName');
-
-        $user = $userModel->where('user_id', $uid)->first();
-        if(!$user){
-            return $this->failNotFound('Cannot found user with uid => '. $uid);
+        $token = $this->request->getVar('token');
+        $client_id = getenv('GOOGLE_CLIENT_ID');
+        $client = new Google_Client(['client_id' => $client_id]);
+        $payload = $client->verifyIdToken($token);
+        if($payload){
+            $user_id = $payload['sub'];
+            $user = new UserModel();
+            $data = array(
+                'user_id' => $user_id,
+                'user_name' => strstr($payload['email'],'@',true),
+                'email' => $payload['email'],
+            );
+            $userAlreadyExist = $user->find($user_id);
+            if(!$userAlreadyExist){
+                $user->insert($data);
+            }
+        }else{
+            return $this->failUnauthorized('Token is invalid');
         }
-        if(!$email){
-            return $this->fail('email is required');
-        }
-        if(!$name){
-            return $this->fail('name is required');
-        }
-
-        if($email !== $user['email']){
-            return $this->fail('email does not match');
-        }
-
-        if($name !== $user['user_name']){
-            return $this->fail('name does not match');
-        }
-
         $key = getenv('JWT_SECRET');
-        $iat = time();
-        $exp = $iat + 3600;
-
-        $payload = array(
-            'iss' => 'BUBUGET API',
-            'sub' => 'Login Token',
-            'iat' => $iat,
-            'exp' => $exp,
-            'uid' => $uid,
-            'email' => $email,
-            'name' => $name,
-
-        );
 
         $token = JWT::encode($payload, $key, 'HS256');
 
@@ -135,29 +118,39 @@ class User extends ResourceController
 
     }
 
-    public function getUserStats($user_id){
-        $transaction = new TransactionModel();
-        $user = new UserModel();
-        $expense = $transaction->getExpenseByUserId($user_id);
-        $income = $transaction->getIncomeByUserId($user_id);
-        $balance = intval($user->getBalance($user_id));
-
-        $total_expense = 0;
-        $total_income = 0;
+    public function getUserStats($user_id=null){
+        if(!$user_id){
+            return $this->fail('user_id is required');
+        }
         
-        foreach($expense as $res){
-            $total_expense += $res['amount'];
-        }
-
-        foreach($income as $res){
-            $total_income += $res['amount'];
-        }
+        $user = new UserModel();
+        $expense = $user->getExpense($user_id);
+        $income = $user->getIncome($user_id);
+        $balance = $user->getBalance($user_id);
         
         $response = array(
-            'income' => $total_income,
-            'expense' => $total_expense,
-            'balance'=> $balance
+            'income' => $income,
+            'expense' => $expense,
+            'balance'=> $balance,
         );
         return $this->respond($response);
+    }
+
+    public function getUserExpense($user_id=null){
+        if(!$user_id){
+            return $this->fail('user_id is required');
+        }
+        $transaction = new TransactionModel();
+        $expense = $transaction->getExpenseByUserId($user_id);
+        return $this->respond($expense);
+    }
+
+    public function getUserIncome($user_id=null){
+        if(!$user_id){
+            return $this->fail('user_id is required');
+        }
+        $transaction = new TransactionModel();
+        $income = $transaction->getIncomeByUserId($user_id);
+        return $this->respond($income);
     }
 }

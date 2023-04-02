@@ -1,5 +1,5 @@
 <?php
-namespace App\Controllers;
+namespace App\Controllers\Api;
 
 use App\Models\BudgetModel;
 use App\Models\CategoryModel;
@@ -89,6 +89,33 @@ class Budget extends ResourceController
         }catch(Throwable $e){
             return $this->fail($e->getMessage());
         }
+    }
+
+    public function update($budget_id = null){
+        $budgetModel = new BudgetModel();
+        $result = $budgetModel->find($budget_id);
+        if(!$result){
+            return $this->failNotFound('Cannot find budget with id ' . $budget_id);
+        }
+        $budget = $this->request->getRawInputVar('budget');
+        if($budget && !is_numeric($budget)){
+            return $this->fail(['message' => 'Invalid budget amount']);
+        }
+        if(!$budget){
+            return $this->fail(['message' => 'Budget is required']);
+        }
+
+        $budgetModel->where('budget_id', $budget_id)->set(['budget' => $budget])->update();
+        $response = array(
+            'status' => 200,
+            'message' => 'Budget updated successfully',
+            'data' => array(
+                'budget_id' => $budget_id,
+                'budget' => $budget
+            )
+        );
+
+        return $this->respondUpdated($response);
     }
 
     public function delete($budget_id=null){
