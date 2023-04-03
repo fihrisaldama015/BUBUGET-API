@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2023 at 01:33 PM
+-- Generation Time: Apr 03, 2023 at 05:56 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -40,8 +40,9 @@ CREATE TABLE `budget` (
 --
 
 INSERT INTO `budget` (`budget_id`, `user_id`, `category_id`, `budget`, `spend`) VALUES
-(2, 'uid123', 1, 20000, 26000),
-(4, 'uid124', 1, 40000, 0);
+(2, '110904942085587260330', 1, 90000, 186000),
+(4, 'uid124', 1, 40000, 13000),
+(6, '110904942085587260330', 2, 20000, 0);
 
 -- --------------------------------------------------------
 
@@ -62,7 +63,8 @@ INSERT INTO `category` (`category_id`, `category_name`) VALUES
 (1, 'makanan'),
 (2, 'bensin'),
 (3, 'hiburan'),
-(4, 'pakaian');
+(4, 'pakaian'),
+(5, 'Dokter');
 
 -- --------------------------------------------------------
 
@@ -76,7 +78,7 @@ CREATE TABLE `transaction` (
   `transaction_type` varchar(50) NOT NULL DEFAULT 'expense',
   `amount` int(11) NOT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `date` date NOT NULL,
+  `date` date NOT NULL DEFAULT current_timestamp(),
   `note` varchar(255) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -85,9 +87,10 @@ CREATE TABLE `transaction` (
 --
 
 INSERT INTO `transaction` (`transaction_id`, `user_id`, `transaction_type`, `amount`, `category_id`, `date`, `note`) VALUES
-(4, 'uid123', 'income', 20000, NULL, '2023-03-27', 'rumah'),
-(5, 'uid123', 'expense', 13000, 1, '2023-03-27', 'nasi goreng'),
-(6, 'uid123', 'expense', 13000, 1, '2023-03-30', 'hottang');
+(4, '110904942085587260330', 'income', 100000, NULL, '2023-04-01', 'gaji'),
+(5, '110904942085587260330', 'expense', 13000, 1, '2023-03-27', 'nasi goreng'),
+(6, '110904942085587260330', 'expense', 13000, 1, '2023-03-30', 'hottang'),
+(15, '110904942085587260330', 'expense', 20000, 1, '2023-04-02', 'martabak');
 
 -- --------------------------------------------------------
 
@@ -99,16 +102,16 @@ CREATE TABLE `users` (
   `user_id` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `user_name` varchar(100) NOT NULL,
-  `balance` int(11) NOT NULL
+  `password` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `email`, `user_name`, `balance`) VALUES
-('uid123', 'fihrisaldama015@gmail.com', 'Muhamad Fihris Aldama', -6000),
-('uid124', 'fihrisaldama06@gmail.com', 'Aldam', 0);
+INSERT INTO `users` (`user_id`, `email`, `user_name`, `password`) VALUES
+('110904942085587260330', 'fihrisaldama015@gmail.com', 'Muhamad Fihris Aldama', NULL),
+('uid124', 'fihrisaldama06@gmail.com', 'Aldam', NULL);
 
 --
 -- Indexes for dumped tables
@@ -133,8 +136,8 @@ ALTER TABLE `category`
 --
 ALTER TABLE `transaction`
   ADD PRIMARY KEY (`transaction_id`),
-  ADD KEY `transaction_cat` (`category_id`),
-  ADD KEY `transaction_uid` (`user_id`);
+  ADD KEY `transaction_uid` (`user_id`),
+  ADD KEY `transaction_cat` (`category_id`);
 
 --
 -- Indexes for table `users`
@@ -150,19 +153,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `budget`
 --
 ALTER TABLE `budget`
-  MODIFY `budget_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `budget_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
@@ -179,7 +182,7 @@ ALTER TABLE `budget`
 -- Constraints for table `transaction`
 --
 ALTER TABLE `transaction`
-  ADD CONSTRAINT `transaction_cat` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transaction_cat` FOREIGN KEY (`category_id`) REFERENCES `budget` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `transaction_uid` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
