@@ -6,7 +6,7 @@ class UserModel extends Model{
     protected $table ="users";
     protected $primaryKey = 'user_id';
     protected $useAutoIncrement = false;
-    protected $allowedFields = ['email','user_name','balance'];
+    protected $allowedFields = ['email','user_name'];
     protected $db;
 
     public function __construct()
