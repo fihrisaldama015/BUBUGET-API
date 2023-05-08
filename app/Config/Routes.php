@@ -54,6 +54,8 @@ $routes->get('api/user/(:alphanum)/expense', 'Api\User::getUserExpense/$1');
 $routes->get('api/user/(:alphanum)/income', 'Api\User::getUserIncome/$1');
 $routes->get('api/user/(:alphanum)/stats', 'Api\User::getUserStats/$1');
 $routes->post('api/user/login', 'Api\User::login');
+$routes->post('api/user/login_email', 'Api\User::loginWithEmail');
+$routes->post('api/user/signup_email', 'Api\User::signupWithEmail');
 $routes->resource('api/user');
 
 /*
