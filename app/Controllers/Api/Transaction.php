@@ -170,7 +170,13 @@ class Transaction extends ResourceController
 
     public function getUserTransaction($user_id=null){
         $transaction = new TransactionModel();
-        $result = $transaction->getTransactionByUserId($user_id);
+        $result = array();
+        $data = $transaction->getTransactionByUserId($user_id);
+        $category = new CategoryModel();
+        foreach($data as $value){
+            $value['category_name'] = $category->getCategoryName($value['category_id']);
+            $result[] = $value;
+        }
         return $this->respond($result);
     }
 
