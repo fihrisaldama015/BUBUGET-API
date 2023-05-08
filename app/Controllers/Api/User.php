@@ -33,7 +33,6 @@ class User extends ResourceController
         $user_id = $this->request->getPost('user_id');
         $name = $this->request->getPost('name');
         $email = $this->request->getPost('email');
-        $password = $this->request->getPost('password');
 
         if(!$user_id){
             return $this->fail('user_id is required');
@@ -51,7 +50,6 @@ class User extends ResourceController
             'user_id' => $user_id,
             'user_name' => $name,
             'email' => $email,
-            'password' => $password
         );
         try {
             $result = $user->insert($data);
@@ -84,20 +82,99 @@ class User extends ResourceController
         return $this->respondDeleted($response);
     }
 
+    public function loginWithEmail(){
+        $uid = $this->request->getVar('uid');
+        $user = new UserModel();
+        $result = $user->find($uid);
+        if(!$result){
+            $response = array(
+                'status'=>404,
+                'message'=>'User not found'
+            );
+            return $this->respond($response);
+        }
+        $key = getenv('JWT_SECRET');
+        $token = JWT::encode($result, $key, "HS256");
+
+        $data = array(
+            'status'=>200,
+            'message'=>'Login Successfully',
+            'token' => $token
+        );
+        
+        return $this->respond($data);
+        // $payload = JWT::decode($payload2, new Key('awokaowk', 'RS256'));
+    }
+
+    public function signupWithEmail(){
+        $email = $this->request->getVar('email');
+        $uid = $this->request->getVar('uid');
+        $name = $this->request->getVar('name');
+
+        if(!$email){
+            return $this->fail('email is required');
+        }
+        if(!$uid){
+            return $this->fail('uid is required');
+        }
+
+        $user = new UserModel();
+
+        $result = $user->find($uid);
+        if($result){
+            $response = array(
+                'status'=>400,
+                'message'=>'User already exist'
+            );
+            return $this->respond($response);
+        }
+
+        if(!$name){
+            $user_name = strstr($email,'@',true);
+        }else{
+            $user_name = $name;
+        }
+
+        $data = array(
+            'user_id' => $uid,
+            'user_name' => $user_name,
+            'email' => $email,
+        );
+
+        $user->insert($data);
+
+        $response = array(
+            'status'=> 200,
+            'message'=>'User created successfully',
+            'data' => $data
+        );
+
+        return $this->respond($response);
+    }
+
     public function login(){
         $token = $this->request->getVar('token');
+        $name = $this->request->getVar('name');
         $client_id = getenv('GOOGLE_CLIENT_ID');
         $client = new Google_Client(['client_id' => $client_id]);
         $payload = $client->verifyIdToken($token);
+        $jwt_data = array();
         if($payload){
             $user_id = $payload['sub'];
             $user = new UserModel();
+            $userAlreadyExist = $user->find($user_id);
+
+            if(!$name){
+                $user_name = strstr($payload['email'],'@',true);
+            }else{
+                $user_name = $name;
+            }
             $data = array(
                 'user_id' => $user_id,
-                'user_name' => strstr($payload['email'],'@',true),
+                'user_name' => $user_name,
                 'email' => $payload['email'],
             );
-            $userAlreadyExist = $user->find($user_id);
+            $jwt_data = $data;
             if(!$userAlreadyExist){
                 $user->insert($data);
             }
@@ -106,7 +183,7 @@ class User extends ResourceController
         }
         $key = getenv('JWT_SECRET');
 
-        $token = JWT::encode($payload, $key, 'HS256');
+        $token = JWT::encode($jwt_data, $key, 'HS256');
 
         $response = array(
             'token' => $token,
