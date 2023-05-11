@@ -1,12 +1,10 @@
-# CodeIgniter 4 Application Starter
-
-## BUBUGET API
+# BUBUGET API
 
 ## Server Requirements
 
 <b>PHP</b> - version 7.4 or higher is required.
 
-<b>Composer</b> - install composer for Windows. <a href="https://getcomposer.org/Composer-Setup.exe">Click Here to Download.</a>
+<b>Composer</b> - install composer for Windows. <a target="_blank" href="https://getcomposer.org/Composer-Setup.exe">Click Here to Download.</a>
 
 ## Setup
 
@@ -30,8 +28,16 @@ composer install
 
 ### Start the application
 
+default host (localhost)
+
 ```
 php spark serve
 ```
 
-open localhost:8080 in your browser
+custom host (apabila default host tidak bisa)
+
+```
+php spark serve --host 127.0.0.1
+```
+
+buka <a target="_blank" href="http://localhost:8080">localhost:8080</a> di browser
