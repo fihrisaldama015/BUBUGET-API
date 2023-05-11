@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 03, 2023 at 05:56 AM
+-- Generation Time: May 11, 2023 at 07:57 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -78,7 +78,7 @@ CREATE TABLE `transaction` (
   `transaction_type` varchar(50) NOT NULL DEFAULT 'expense',
   `amount` int(11) NOT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `date` date NOT NULL DEFAULT current_timestamp(),
+  `date` date NOT NULL,
   `note` varchar(255) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -90,7 +90,8 @@ INSERT INTO `transaction` (`transaction_id`, `user_id`, `transaction_type`, `amo
 (4, '110904942085587260330', 'income', 100000, NULL, '2023-04-01', 'gaji'),
 (5, '110904942085587260330', 'expense', 13000, 1, '2023-03-27', 'nasi goreng'),
 (6, '110904942085587260330', 'expense', 13000, 1, '2023-03-30', 'hottang'),
-(15, '110904942085587260330', 'expense', 20000, 1, '2023-04-02', 'martabak');
+(15, '110904942085587260330', 'expense', 20000, 1, '2023-04-02', 'martabak'),
+(16, 'EcGQxzDd0aWiaqxOLEM3vPhvbtL2', 'income', 100000, NULL, '2023-04-15', 'testing');
 
 -- --------------------------------------------------------
 
@@ -101,17 +102,19 @@ INSERT INTO `transaction` (`transaction_id`, `user_id`, `transaction_type`, `amo
 CREATE TABLE `users` (
   `user_id` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `user_name` varchar(100) NOT NULL,
-  `password` varchar(255) DEFAULT NULL
+  `user_name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `email`, `user_name`, `password`) VALUES
-('110904942085587260330', 'fihrisaldama015@gmail.com', 'Muhamad Fihris Aldama', NULL),
-('uid124', 'fihrisaldama06@gmail.com', 'Aldam', NULL);
+INSERT INTO `users` (`user_id`, `email`, `user_name`) VALUES
+('110904942085587260330', 'fihrisaldama015@gmail.com', 'Muhamad Fihris Aldama'),
+('111229502564841860120', 'fihrisaldama06@gmail.com', 'fihrisaldama06'),
+('7UVQrMASDaUmHaMuD4BBZNrn0BJ3', 'fihrisaldama06@gmail.com', 'Muhamad Fihris Aldama'),
+('EcGQxzDd0aWiaqxOLEM3vPhvbtL2', 'nutrisatir88@gmail.com', 'nutrisatir88'),
+('uid124', 'fihrisaldama06@gmail.com', 'Aldam');
 
 --
 -- Indexes for dumped tables
@@ -165,7 +168,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
