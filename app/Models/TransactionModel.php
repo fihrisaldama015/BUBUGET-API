@@ -15,11 +15,11 @@ class TransactionModel extends Model{
     }
 
     public function getTransactionByUserId($user_id){
-        return $this->db->table($this->table)->where('user_id',$user_id)->get()->getResultArray();
+        return $this->db->table($this->table)->where('user_id',$user_id)->orderBy('date', 'desc')->get()->getResultArray();
     }
 
     public function getTransactionByCategory($user_id, $category_id){
-        return $this->db->table($this->table)->where('user_id',$user_id)->where('category_id',$category_id)->get()->getResultArray();
+        return $this->db->table($this->table)->where('user_id',$user_id)->where('category_id',$category_id)->orderBy('date', 'desc')->get()->getResultArray();
     }
 
     public function getExpenseByUserId($user_id){
