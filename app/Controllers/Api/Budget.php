@@ -36,9 +36,9 @@ class Budget extends ResourceController
     }
 
     public function create(){
-        $user_id = $this->request->getPost('user_id');
-        $category_id = $this->request->getPost('category_id');
-        $budgetAmount = $this->request->getPost('budget');
+        $user_id = $this->request->getVar('user_id');
+        $category_id = $this->request->getVar('category_id');
+        $budgetAmount = $this->request->getVar('budget');
 
         if(!$user_id){
             return $this->fail('user_id is required');
