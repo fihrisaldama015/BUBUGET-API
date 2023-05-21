@@ -33,28 +33,28 @@ class Transaction extends ResourceController
         $transaction = new TransactionModel();
         $category = new CategoryModel();
 
-        $transaction_type = $this->request->getPost('transaction_type');
+        $transaction_type = $this->request->getVar('transaction_type');
         if (!$transaction_type || !in_array($transaction_type, ['income', 'expense'])) {
             return $this->fail(['message' => 'Invalid transaction_type, expected income or expense']);
         }
 
-        $category_id = $this->request->getPost('category_id');
+        $category_id = $this->request->getVar('category_id');
         if ($transaction_type === 'expense' && !$category->getCategoryName($category_id)) {
             return $this->failNotFound('Cannot find category with id ' . $category_id. ' or category_id is missing');
         }
 
-        $user_id = $this->request->getPost('user_id');
+        $user_id = $this->request->getVar('user_id');
         if (!$user_id) {
             return $this->fail(['message' => 'user_id is required']);
         }
 
-        $date = $this->request->getPost('date') ?? date('Y-m-d') ;
+        $date = $this->request->getVar('date') ?? date('Y-m-d') ;
         if (!strtotime($date)) {
             return $this->fail(['message' => 'Invalid date format, require format dd-mm-yyyy']);
         }
-        $note = $this->request->getPost('note');
+        $note = $this->request->getVar('note');
 
-        $amount = $this->request->getPost('amount');
+        $amount = $this->request->getVar('amount');
         if (!$amount) {
             return $this->fail(['message' => 'amount is required']);
         }
